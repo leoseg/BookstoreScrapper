@@ -11,8 +11,6 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
     public static final String RPC_MESSAGE_QUEUE = "books";
-//    public static final String RPC_REPLY_MESSAGE_QUEUE = "amq.rabbitmq.reply-to";
-//    public static final String RPC_EXCHANGE = "rpc_exchange";
 
     /** *
      * Configure the task message queue
@@ -34,29 +32,5 @@ public class RabbitMQConfig {
         rabbitTemplate.setMessageConverter(producerJackson2MessageConverter());
         return rabbitTemplate;
     }
-
-//    /** *
-//     * Return Queue Configuration
-//     */
-//    @Bean
-//    Queue replyQueue() {
-//        return new Queue(RPC_REPLY_MESSAGE_QUEUE);
-//    }
-//    /** *
-//     * Configures the exchange between the queues
-//     */
-//    @Bean
-//    TopicExchange topicExchange() {
-//        return new TopicExchange(RPC_EXCHANGE);
-//    }
-//    /** *
-//     *Bindes the task queue to the reply queue
-//     */
-//    @Bean
-//    Binding msgBinding() {
-//        return BindingBuilder.bind(msgQueue())
-//                .to(topicExchange())
-//                .with(RPC_MESSAGE_QUEUE);
-//    }
 
 }

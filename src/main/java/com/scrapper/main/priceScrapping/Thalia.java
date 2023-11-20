@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 @Component("Thalia")
 public class Thalia implements StorePrices{
 
-    public String storeTag = "Thalia";
-    public String searchUrl = "https://www.thalia.de/suche?sq=";
-    public String storeBaseUrl = "https://www.thalia.de";
+    public final String storeTag = "Thalia";
+    public final String searchUrl = "https://www.thalia.de/suche?sq=";
+    public final String storeBaseUrl = "https://www.thalia.de";
 
     public ContentFetcher contentFetcher;
 
@@ -123,7 +123,7 @@ public class Thalia implements StorePrices{
             price = Objects.requireNonNull(doc.select(".preis .element-headline-medium").first()).text().trim();
         }
         String storeID = url.substring(url.lastIndexOf("/") + 1);
-        return new BookStoreItem(price, priceEbook, pricePaperback, storeID, url, storeTag,null);
+        return new BookStoreItem(price, priceEbook, pricePaperback, storeID, url, storeTag,null,0);
     }
 
 

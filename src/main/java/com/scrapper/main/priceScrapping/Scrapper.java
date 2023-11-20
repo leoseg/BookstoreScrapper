@@ -30,7 +30,8 @@ public class Scrapper {
                     storePricesTag,
                     " ",
                     " ",
-                    book
+                    book,
+                    0
             );
         }
         String bookPage = storePricesImpl.getContentFetcher().fetchContent(url);

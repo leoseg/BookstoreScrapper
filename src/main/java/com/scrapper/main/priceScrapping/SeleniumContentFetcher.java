@@ -54,7 +54,8 @@ public class SeleniumContentFetcher implements ContentFetcher{
                     releasePool(driver);
                 } else{
                     driver.quit();
-                    this.pool.offer(new ChromeDriver());
+                    WebDriver newDriver = new ChromeDriver();
+                    this.pool.offer(newDriver);
                 }
 
             }

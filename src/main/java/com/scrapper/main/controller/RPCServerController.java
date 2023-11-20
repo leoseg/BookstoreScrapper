@@ -24,6 +24,20 @@ public class RPCServerController {
 
     @RabbitListener(queues = RabbitMQConfig.RPC_MESSAGE_QUEUE)
     public BookStoreItem process(@Payload BookMessage bookMessage){
-        return scrapper.getBookStoreItem(bookMessage.book(),bookMessage.storePricesTag());
+        try {
+             return scrapper.getBookStoreItem(bookMessage.book(), bookMessage.storePricesTag());
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return new BookStoreItem(
+                    "Not found",
+                    "Not found",
+                    " ",
+                    bookMessage.storePricesTag(),
+                    " ",
+                    " ",
+                    null,
+                    2
+            );
+        }
     }
 }
