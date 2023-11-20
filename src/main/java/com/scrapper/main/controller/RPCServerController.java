@@ -9,6 +9,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+/**
+ * RPC server controller
+ */
 @Component
 public class RPCServerController {
 
@@ -22,6 +25,11 @@ public class RPCServerController {
         this.scrapper = scrapper;
     }
 
+    /**
+     * Process the message and return the book store item from books queue
+     * @param bookMessage book message
+     * @return BookStoreItem
+     */
     @RabbitListener(queues = RabbitMQConfig.RPC_MESSAGE_QUEUE)
     public BookStoreItem process(@Payload BookMessage bookMessage){
         try {

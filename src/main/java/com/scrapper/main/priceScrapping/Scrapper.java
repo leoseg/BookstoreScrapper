@@ -6,7 +6,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-
+/**
+ * Scrapper class which scrapes the data from the store by using different inferfaces of {@link StorePrices}
+ */
 @Component
 public class Scrapper {
 
@@ -17,6 +19,12 @@ public class Scrapper {
         this.storePricesBeans = storePricesBeans;
     }
 
+    /**
+     * Get the book store item from the store
+     * @param book book to search for
+     * @param storePricesTag store tag
+     * @return BookStoreItem
+     */
     public BookStoreItem getBookStoreItem(Book book, String storePricesTag){
         StorePrices storePricesImpl = storePricesBeans.get(storePricesTag);
         String storeSearchUrl = storePricesImpl.getStoreSearchUrl(book);

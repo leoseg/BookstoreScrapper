@@ -9,7 +9,9 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-
+/**
+ * Selenium content fetcher who manages a pool of selenium webdrivers used by multiple threads
+ */
 @Component
 public class SeleniumContentFetcher implements ContentFetcher{
 

@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-
+/**
+ * Thalia class which implements {@link StorePrices} for Thalia store
+ */
 @Component("Thalia")
 public class Thalia implements StorePrices{
 

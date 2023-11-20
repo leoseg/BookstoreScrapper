@@ -20,12 +20,20 @@ public class RabbitMQConfig {
         return new Queue(RPC_MESSAGE_QUEUE);
     }
 
-
+    /**
+     * Configures the message converter
+     * @return Jackson2JsonMessageConverter
+     */
     @Bean
     public Jackson2JsonMessageConverter producerJackson2MessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
+    /**
+     * Configures the rabbit template
+     * @param connectionFactory connection factory
+     * @return RabbitTemplate
+     */
     @Bean
     public RabbitTemplate rabbitTemplate(final ConnectionFactory connectionFactory) {
         final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
