@@ -8,24 +8,26 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.jsoup.nodes.Element;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component("thalia")
+@Component("Thalia")
 public class Thalia implements StorePrices{
 
-    public String storeTag = "thalia";
+    public String storeTag = "Thalia";
     public String searchUrl = "https://www.thalia.de/suche?sq=";
     public String storeBaseUrl = "https://www.thalia.de";
 
-    @Autowired
     public ContentFetcher contentFetcher;
 
-    @Autowired
     public StringHelper stringHelper;
+
+    public Thalia(ContentFetcher contentFetcher, StringHelper stringHelper){
+        this.contentFetcher = contentFetcher;
+        this.stringHelper = stringHelper;
+    }
 
     @Override
     public ContentFetcher getContentFetcher() {
@@ -46,8 +48,11 @@ public class Thalia implements StorePrices{
     }
 
     private String convertToToAuthorThaliaFormat(String author){
-        String authorList = Arrays.stream(author.split(",")).map(String::trim).collect(Collectors.joining(" "));
-        return new StringBuilder(authorList).reverse().toString().trim();
+        String authorList = Arrays.stream(author.split(",")).map(String::trim).toList()
+                          .stream()
+                          .sorted(Collections.reverseOrder())
+                          .collect(Collectors.joining(" "));
+        return authorList.trim();
     }
 
     @Override
@@ -58,7 +63,7 @@ public class Thalia implements StorePrices{
         for (Element productElement : productElements) {
             String productName = productElement.select("dl-product").attr("name");
             String productAuthor = productElement.select(".tm-artikeldetails__autor").text().trim();
-            if (productName.isEmpty() && productAuthor.isEmpty()) {
+            if (!productName.isEmpty() && !productAuthor.isEmpty()) {
                 String link = productElement.select("a.element-link-toplevel.tm-produkt-link").attr("href");
                 HashMap<String,String> product = new HashMap<>();
                 product.put("name", StringHelper.normalizeString(productName));
@@ -95,7 +100,7 @@ public class Thalia implements StorePrices{
         String pricePaperback = null;
         for (Element element : elements) {
             String caption = element.attr("caption");
-            if (caption.isEmpty() && storeItemMapping.containsKey(caption)) {
+            if (!caption.isEmpty() && storeItemMapping.containsKey(caption)) {
                 String mappedValue = storeItemMapping.get(caption);
                 if (mappedValue != null) {
                     String text = element.select("strong.element-text-small-strong").text().replaceAll("\\s+", " ").trim();

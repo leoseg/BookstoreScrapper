@@ -6,18 +6,21 @@ import com.scrapper.main.dataTypes.BookStoreItem;
 import com.scrapper.main.priceScrapping.Scrapper;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RPCServerController {
 
-    @Autowired
     RabbitTemplate rabbitTemplate;
 
-    @Autowired
+
     Scrapper scrapper;
+
+    RPCServerController(RabbitTemplate rabbitTemplate, Scrapper scrapper){
+        this.rabbitTemplate = rabbitTemplate;
+        this.scrapper = scrapper;
+    }
 
     @RabbitListener(queues = RabbitMQConfig.RPC_MESSAGE_QUEUE)
     public BookStoreItem process(@Payload BookMessage bookMessage){

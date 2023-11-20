@@ -2,7 +2,6 @@ package com.scrapper.main.priceScrapping;
 
 import com.scrapper.main.dataTypes.Book;
 import com.scrapper.main.dataTypes.BookStoreItem;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -11,8 +10,12 @@ import java.util.Map;
 @Component
 public class Scrapper {
 
-    @Autowired
-    private Map<String,StorePrices> storePricesBeans;
+
+    private final Map<String,StorePrices> storePricesBeans;
+
+    public Scrapper(Map<String,StorePrices> storePricesBeans){
+        this.storePricesBeans = storePricesBeans;
+    }
 
     public BookStoreItem getBookStoreItem(Book book, String storePricesTag){
         StorePrices storePricesImpl = storePricesBeans.get(storePricesTag);

@@ -21,7 +21,7 @@ public class StringHelper {
                  .replaceAll("ö", "oe")
                  .replaceAll("ü", "ue")
                  .replaceAll("ß", "ss")
-                 .toLowerCase();
+                 .toLowerCase().replaceAll(":","");
     }
 
     double compareStrings(String string1, String string2){
