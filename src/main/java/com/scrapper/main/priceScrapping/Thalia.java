@@ -11,7 +11,7 @@ import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @Component("Thalia")
 public class Thalia implements StorePrices{
@@ -38,6 +38,7 @@ public class Thalia implements StorePrices{
         put("Gebundenes Buch","price");
         put("eBook","priceEbook");
         put("Taschenbuch","pricePaperback");
+        put("Gebundenes Buch (weitere)","price");
     }};
 
     public String getStoreSearchUrl(Book book){
@@ -48,11 +49,10 @@ public class Thalia implements StorePrices{
     }
 
     private String convertToToAuthorThaliaFormat(String author){
-        String authorList = Arrays.stream(author.split(",")).map(String::trim).toList()
-                          .stream()
-                          .sorted(Collections.reverseOrder())
-                          .collect(Collectors.joining(" "));
-        return authorList.trim();
+        List<String> authorList = new ArrayList<>(Arrays.stream(author.split(",")).map(String::trim).toList());
+        Collections.reverse(authorList);
+        String authorString = String.join(" ", authorList);
+        return authorString.trim();
     }
 
     @Override
@@ -62,6 +62,9 @@ public class Thalia implements StorePrices{
         Elements productElements = doc.select(".tm-produktliste__eintrag.artikel");
         for (Element productElement : productElements) {
             String productName = productElement.select("dl-product").attr("name");
+            if(productName.isEmpty()){
+                productName = productElement.select(".tm-artikeldetails__title").text().trim();
+            }
             String productAuthor = productElement.select(".tm-artikeldetails__autor").text().trim();
             if (!productName.isEmpty() && !productAuthor.isEmpty()) {
                 String link = productElement.select("a.element-link-toplevel.tm-produkt-link").attr("href");
@@ -95,11 +98,14 @@ public class Thalia implements StorePrices{
     public BookStoreItem getStoreBookData(String searchResponseData, String url) {
         Document doc = Jsoup.parse(searchResponseData);
         Elements elements = doc.select(".element-struktur-kachel-standard.hauptformat");
-        String price = null;
-        String priceEbook = null;
-        String pricePaperback = null;
+        String price = "NA";
+        String priceEbook = "NA";
+        String pricePaperback = "NA";
         for (Element element : elements) {
             String caption = element.attr("caption");
+            if(caption.isEmpty()){
+                caption = element.select("p.element-text-small.bezeichnung").text().trim();
+            }
             if (!caption.isEmpty() && storeItemMapping.containsKey(caption)) {
                 String mappedValue = storeItemMapping.get(caption);
                 if (mappedValue != null) {
@@ -117,13 +123,14 @@ public class Thalia implements StorePrices{
                     }
                 }
             }
+
         }
 
         if (elements.isEmpty()) {
             price = Objects.requireNonNull(doc.select(".preis .element-headline-medium").first()).text().trim();
         }
         String storeID = url.substring(url.lastIndexOf("/") + 1);
-        return new BookStoreItem(price, priceEbook, pricePaperback, storeID, url, storeTag,null,0);
+        return new BookStoreItem(storeID, url, priceEbook, storeTag, price, pricePaperback, 0);
     }
 
 

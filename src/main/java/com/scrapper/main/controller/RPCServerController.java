@@ -35,7 +35,6 @@ public class RPCServerController {
                     bookMessage.storePricesTag(),
                     " ",
                     " ",
-                    null,
                     2
             );
         }

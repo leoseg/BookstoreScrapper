@@ -5,6 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,8 @@ public class SeleniumContentFetcher implements ContentFetcher{
 
     private final int numWebdrivers;
 
+    private ChromeOptions chromeOptions = new ChromeOptions();
+
     public SeleniumContentFetcher(@Value("${pool.size}") int numWebdrivers){
         this.numWebdrivers = numWebdrivers;
         this.pool = new LinkedBlockingQueue<>(numWebdrivers);
@@ -24,9 +27,31 @@ public class SeleniumContentFetcher implements ContentFetcher{
 
     }
 
+    private static final String[] minimal_args = {
+      "--disable-blink-features=AutomationControlled",
+            "--window-size=1920,1080",
+            "start-maximized",
+
+    };
+
+    private static final String[] userAgents = {
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15",
+    };
+
     private void initalizePool(){
+        this.chromeOptions.addArguments("--headless=new");
+        this.chromeOptions.addArguments(minimal_args);
+        this.chromeOptions.addArguments("--user-agent="+userAgents[(int)(Math.random()*userAgents.length)]);
+        this.chromeOptions.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
+        this.chromeOptions.setExperimentalOption("useAutomationExtension", false);
         for(int i = 0; i < numWebdrivers; i++){
-            WebDriver driver = new ChromeDriver();
+            WebDriver driver = new ChromeDriver(this.chromeOptions);
             pool.offer(driver);
         }
     }
@@ -54,7 +79,7 @@ public class SeleniumContentFetcher implements ContentFetcher{
                     releasePool(driver);
                 } else{
                     driver.quit();
-                    WebDriver newDriver = new ChromeDriver();
+                    WebDriver newDriver = new ChromeDriver(this.chromeOptions);
                     this.pool.offer(newDriver);
                 }
 

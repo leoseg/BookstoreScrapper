@@ -38,6 +38,23 @@ public class ThaliaTest {
     }
 
     @Test
+    public void testGetStoreSearchUrl2(){
+        Book book = new Book("Wie wir begehren","Emcke, Carolin");
+        String expected = "https://www.thalia.de/suche?sq=Wie+wir+begehren+Carolin+Emcke";
+        String result = thalia.getStoreSearchUrl(book);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testGetStoreSearchUrl3(){
+        Book book = new Book("All about Love: New Vision","hooks, bell");
+        String expected = "https://www.thalia.de/suche?sq=All+about+Love:+New+Vision+bell+hooks";
+        String result = thalia.getStoreSearchUrl(book);
+        assertEquals(expected, result);
+    }
+
+
+    @Test
     public void testGetStoreBookUrl() {
         String storeSearchContent = TestHTML.thaliaStoreSearchResult;
         String title = "Die Haushälterin";
@@ -64,7 +81,7 @@ public class ThaliaTest {
         String searchResponseData = TestHTML.thaliaBookPage;
         String url = "https://www.thalia.de/shop/home/artikeldetails/A1063536722";
 
-        BookStoreItem expectedBookData = new BookStoreItem("22,00 €", "10,99 €", "13,00 €", "A1063536722", url, "Thalia", null);
+        BookStoreItem expectedBookData = new BookStoreItem("22,00 €", "10,99 €", "13,00 €", "A1063536722", url, "Thalia", 0);
 
         BookStoreItem bookData = thalia.getStoreBookData(searchResponseData, url);
         assertEquals(expectedBookData, bookData);

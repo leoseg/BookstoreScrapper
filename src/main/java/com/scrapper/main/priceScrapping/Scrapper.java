@@ -30,7 +30,6 @@ public class Scrapper {
                     storePricesTag,
                     " ",
                     " ",
-                    book,
                     0
             );
         }
