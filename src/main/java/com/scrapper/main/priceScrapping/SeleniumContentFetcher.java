@@ -52,6 +52,9 @@ public class SeleniumContentFetcher implements ContentFetcher{
         this.chromeOptions.addArguments("--user-agent="+userAgents[(int)(Math.random()*userAgents.length)]);
         this.chromeOptions.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
         this.chromeOptions.setExperimentalOption("useAutomationExtension", false);
+        this.chromeOptions.addArguments("--no-sandbox");
+        this.chromeOptions.addArguments("--disable-dev-shm-usage");
+        this.chromeOptions.setBinary("/usr/bin/chromium-browser");
         for(int i = 0; i < numWebdrivers; i++){
             WebDriver driver = new ChromeDriver(this.chromeOptions);
             pool.offer(driver);
