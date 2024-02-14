@@ -81,7 +81,8 @@ public class ThaliaTest {
         String searchResponseData = TestHTML.thaliaBookPage;
         String url = "https://www.thalia.de/shop/home/artikeldetails/A1063536722";
 
-        BookStoreItem expectedBookData = new BookStoreItem("22,00 €", "10,99 €", "13,00 €", "A1063536722", url, "Thalia", 0);
+        BookStoreItem expectedBookData = new BookStoreItem(
+                "A1063536722", url, "10,99 €","Thalia","22,00 €", "13,00 €",0);
 
         BookStoreItem bookData = thalia.getStoreBookData(searchResponseData, url);
         assertEquals(expectedBookData, bookData);
