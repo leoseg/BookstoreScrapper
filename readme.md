@@ -18,3 +18,4 @@ This service uses SpringBoot, RabbitMQ, Selenium, and JSoup.
 
 ### Setup
 Gradle is used for package management and building. So run `gradle build` to build the project and `gradle run` to run the project.
+Chrome has to be installed to run it local.
