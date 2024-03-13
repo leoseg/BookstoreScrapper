@@ -34,7 +34,7 @@ dependencies {
     implementation 'org.seleniumhq.selenium:selenium-java:4.15.0'
     implementation 'org.jsoup:jsoup:1.16.1'
     implementation 'info.debatty:java-string-similarity:0.10'
-    implementation 'io.github.bonigarcia:webdrivermanager:5.4.1'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.7.0'
 }
 
 tasks.named('bootBuildImage') {

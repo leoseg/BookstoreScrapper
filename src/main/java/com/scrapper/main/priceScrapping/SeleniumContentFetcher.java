@@ -1,11 +1,16 @@
 package com.scrapper.main.priceScrapping;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
+import io.github.bonigarcia.wdm.config.DriverManagerType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -20,13 +25,15 @@ public class SeleniumContentFetcher implements ContentFetcher{
 
     private final int numWebdrivers;
 
+    private final boolean isContainer;
+
     private ChromeOptions chromeOptions = new ChromeOptions();
 
-    public SeleniumContentFetcher(@Value("${pool.size}") int numWebdrivers){
+    public SeleniumContentFetcher(@Value("${pool.size}") int numWebdrivers, @Value("${IS_CONTAINER:false}") boolean isContainer) throws MalformedURLException {
         this.numWebdrivers = numWebdrivers;
         this.pool = new LinkedBlockingQueue<>(numWebdrivers);
+        this.isContainer = isContainer;
         this.initalizePool();
-
     }
 
     private static final String[] minimal_args = {
@@ -46,7 +53,7 @@ public class SeleniumContentFetcher implements ContentFetcher{
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15",
     };
 
-    private void initalizePool(){
+    private void initalizePool() throws MalformedURLException {
         this.chromeOptions.addArguments("--headless=new");
         this.chromeOptions.addArguments(minimal_args);
         this.chromeOptions.addArguments("--user-agent="+userAgents[(int)(Math.random()*userAgents.length)]);
@@ -54,9 +61,23 @@ public class SeleniumContentFetcher implements ContentFetcher{
         this.chromeOptions.setExperimentalOption("useAutomationExtension", false);
         this.chromeOptions.addArguments("--no-sandbox");
         this.chromeOptions.addArguments("--disable-dev-shm-usage");
-        this.chromeOptions.setBinary("/usr/bin/chromium-browser");
+        //this.chromeOptions.setBinary("/usr/bin/chromium-browser");
         for(int i = 0; i < numWebdrivers; i++){
-            WebDriver driver = new ChromeDriver(this.chromeOptions);
+            WebDriver driver;
+            if(this.isContainer){
+                URL driverUrl =new URL(System.getenv("DRIVER_URL"));
+                driver = new RemoteWebDriver(driverUrl,this.chromeOptions);
+            }
+            else{
+                try{
+                    driver = new ChromeDriver(this.chromeOptions);
+                } catch (Exception e) {
+                    WebDriverManager webDriverManager = WebDriverManager.chromedriver();
+                    webDriverManager.clearDriverCache().setup();
+                    webDriverManager.clearResolutionCache().setup();
+                    driver = new ChromeDriver(this.chromeOptions);
+                }
+            }
             pool.offer(driver);
         }
     }
